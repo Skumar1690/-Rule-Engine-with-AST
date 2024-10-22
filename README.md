@@ -30,7 +30,7 @@ class Node {
     this.type = type; // 'operator' (AND/OR) or 'operand' (condition)
     this.left = left; // left child (node)
     this.right = right; // right child (node)
-    this.value = value; // operand value (for conditions)
+    this.value = value; // operand value 
   }
 }
 ```
