@@ -5,28 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rule Engine UI</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
 </head>
 
 <body>
-    <h1>Rule Engine Evaluation</h1>
-    <form id="ruleForm">
-        <label for="userId">User ID:</label>
-        <input type="text" id="userId" required><br><br>
+    <div class="container">
+        <h1>Rule Engine Evaluation</h1>
+        <form id="ruleForm">
+            <div class="form-group">
+                <label for="userId">User ID:</label>
+                <input type="text" id="userId" required placeholder="Enter User ID">
+            </div>
 
-        <label for="ruleString">Rule String:</label>
-        <input type="text" id="ruleString" required placeholder="e.g., age > 30 AND department = 'Sales'"><br><br>
+            <div class="form-group">
+                <label for="ruleString">Rule String:</label>
+                <input type="text" id="ruleString" required placeholder="e.g., age > 30 AND department = 'Sales'">
+            </div>
 
-        <button type="submit">Evaluate Rule</button>
-    </form>
+            <button type="submit">Evaluate Rule</button>
+        </form>
 
-    <h2>Result:</h2>
-    <pre id="result"></pre>
+        <h2>Result:</h2>
+        <pre id="result"></pre>
+    </div>
 
     <script>
         document.getElementById('ruleForm').addEventListener('submit', async function (event) {

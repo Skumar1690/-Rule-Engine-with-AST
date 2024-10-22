@@ -15,35 +15,41 @@ class Node {
 
 // Function to create rule AST from rule string
 function create_rule(ruleString) {
-    const tokens = ruleString.split(/\s+/);
+    const tokens = ruleString.split(/\s+(AND|OR)\s+/);  // Split by logical operators
     let currentNode = null;
 
     // Helper function to create a condition node (operand)
     function createConditionNode(conditionStr) {
-        const [field, operator, value] = conditionStr.split(/(>=|<=|>|<|!=|=)/);  // Split by operator
-        return new Node('operand', { field: field.trim(), operator: operator.trim(), value: value.trim() });
+        const parts = conditionStr.split(/(>=|<=|>|<|!=|=)/).map(part => part.trim());
+        if (parts.length !== 3) {
+            throw new Error(`Invalid condition format: "${conditionStr}". Expected format: field operator value.`);
+        }
+        
+        const field = parts[0]; // Field
+        const operator = parts[1]; // Operator
+        const value = parts[2].trim(); // Value
+        
+        // Return a new operand node
+        return new Node('operand', { field, operator, value });
     }
 
     // Process each token and build the tree
     for (let i = 0; i < tokens.length; i++) {
-        const token = tokens[i].toUpperCase();
+        const token = tokens[i];
 
-        if (token === 'AND' || token === 'OR') {
-            // Create an operator node
-            const operatorNode = new Node('operator', token);
-
-            // Set the current node as the left child and prepare for right child
+        if (i > 0) {
+            // If it's not the first token, it should be a logical operator
+            const operatorNode = new Node('operator', tokens[i - 1].toUpperCase());
             operatorNode.left = currentNode;
             currentNode = operatorNode;
-        } else {
-            // If it's not an operator, it's a condition, so create a condition node
-            const conditionNode = createConditionNode(token);
+        }
 
-            if (!currentNode) {
-                currentNode = conditionNode;  // Initialize root if no current node
-            } else if (currentNode.type === 'operator' && !currentNode.right) {
-                currentNode.right = conditionNode;  // Add right child to operator
-            }
+        // Create a condition node
+        const conditionNode = createConditionNode(token);
+        if (!currentNode) {
+            currentNode = conditionNode;  // Initialize root if no current node
+        } else if (currentNode.type === 'operator' && !currentNode.right) {
+            currentNode.right = conditionNode;  // Add right child to operator
         }
     }
 
@@ -60,19 +66,25 @@ function evaluate_rule(node, attributes) {
             throw new Error(`Field "${field}" is not found in attributes.`);
         }
 
+        // Convert value to number if field is numeric
+        let comparisonValue = value; // Use a new variable for comparison
+        if (typeof fieldValue === 'number') {
+            comparisonValue = Number(value); // Convert string value to number for comparison
+        }
+
         switch (operator) {
             case '>':
-                return fieldValue > value;
+                return fieldValue > comparisonValue;
             case '<':
-                return fieldValue < value;
+                return fieldValue < comparisonValue;
             case '>=':
-                return fieldValue >= value;
+                return fieldValue >= comparisonValue;
             case '<=':
-                return fieldValue <= value;
+                return fieldValue <= comparisonValue;
             case '=':
-                return fieldValue == value;
+                return fieldValue == comparisonValue; // Use loose equality to allow type coercion
             case '!=':
-                return fieldValue != value;
+                return fieldValue != comparisonValue; // Use loose inequality to allow type coercion
             default:
                 throw new Error(`Unsupported operator "${operator}".`);
         }
