@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Engine UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Rule Engine Evaluation</h1>
+    <form id="ruleForm">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" required><br><br>
+
+        <label for="ruleString">Rule String:</label>
+        <input type="text" id="ruleString" required placeholder="e.g., age > 30 AND department = 'Sales'"><br><br>
+
+        <button type="submit">Evaluate Rule</button>
+    </form>
+
+    <h2>Result:</h2>
+    <pre id="result"></pre>
+
+    <script>
+        document.getElementById('ruleForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent form submission
+
+            const userId = document.getElementById('userId').value;
+            const ruleString = document.getElementById('ruleString').value;
+
+            const response = await fetch('http://localhost:3000/evaluate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId, ruleString })
+            });
+
+            const data = await response.json();
+            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        });
+    </script>
+</body>
+
+</html>
