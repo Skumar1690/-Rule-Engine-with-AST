@@ -24,11 +24,11 @@ function create_rule(ruleString) {
         if (parts.length !== 3) {
             throw new Error(`Invalid condition format: "${conditionStr}". Expected format: field operator value.`);
         }
-        
+
         const field = parts[0]; // Field
         const operator = parts[1]; // Operator
         const value = parts[2].trim(); // Value
-        
+
         // Return a new operand node
         return new Node('operand', { field, operator, value });
     }
