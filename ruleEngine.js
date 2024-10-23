@@ -7,18 +7,17 @@ const mysql = require('mysql2');
 class Node {
     constructor(type, value, left = null, right = null) {
         this.type = type;  // 'operator' or 'operand'
-        this.value = value;  // 'AND', 'OR', or condition (e.g., 'age > 30')
-        this.left = left;  // Left child node (for operators)
-        this.right = right;  // Right child node (for operators)
+        this.value = value;  
+        this.left = left; 
+        this.right = right;  
     }
 }
 
 // Function to create rule AST from rule string
 function create_rule(ruleString) {
-    const tokens = ruleString.split(/\s+(AND|OR)\s+/);  // Split by logical operators
+    const tokens = ruleString.split(/\s+(AND|OR)\s+/); 
     let currentNode = null;
-
-    // Helper function to create a condition node (operand)
+    
     function createConditionNode(conditionStr) {
         const parts = conditionStr.split(/(>=|<=|>|<|!=|=)/).map(part => part.trim());
         if (parts.length !== 3) {
@@ -29,16 +28,14 @@ function create_rule(ruleString) {
         const operator = parts[1]; // Operator
         const value = parts[2].trim(); // Value
 
-        // Return a new operand node
         return new Node('operand', { field, operator, value });
     }
 
-    // Process each token and build the tree
     for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
 
         if (i > 0) {
-            // If it's not the first token, it should be a logical operator
+            
             const operatorNode = new Node('operator', tokens[i - 1].toUpperCase());
             operatorNode.left = currentNode;
             currentNode = operatorNode;
@@ -47,16 +44,15 @@ function create_rule(ruleString) {
         // Create a condition node
         const conditionNode = createConditionNode(token);
         if (!currentNode) {
-            currentNode = conditionNode;  // Initialize root if no current node
+            currentNode = conditionNode;  
         } else if (currentNode.type === 'operator' && !currentNode.right) {
-            currentNode.right = conditionNode;  // Add right child to operator
+            currentNode.right = conditionNode;  
         }
     }
 
     return currentNode;
 }
 
-// Function to evaluate the AST rule against user attributes
 function evaluate_rule(node, attributes) {
     if (node.type === 'operand') {
         const { field, operator, value } = node.value;
@@ -66,10 +62,9 @@ function evaluate_rule(node, attributes) {
             throw new Error(`Field "${field}" is not found in attributes.`);
         }
 
-        // Convert value to number if field is numeric
-        let comparisonValue = value; // Use a new variable for comparison
+        let comparisonValue = value; 
         if (typeof fieldValue === 'number') {
-            comparisonValue = Number(value); // Convert string value to number for comparison
+            comparisonValue = Number(value); 
         }
 
         switch (operator) {
@@ -82,9 +77,9 @@ function evaluate_rule(node, attributes) {
             case '<=':
                 return fieldValue <= comparisonValue;
             case '=':
-                return fieldValue == comparisonValue; // Use loose equality to allow type coercion
+                return fieldValue == comparisonValue; 
             case '!=':
-                return fieldValue != comparisonValue; // Use loose inequality to allow type coercion
+                return fieldValue != comparisonValue; 
             default:
                 throw new Error(`Unsupported operator "${operator}".`);
         }

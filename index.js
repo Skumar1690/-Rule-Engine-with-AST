@@ -1,20 +1,18 @@
 // index.js
 
-require('dotenv').config(); // Load environment variables
+require('dotenv').config(); 
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path'); // Import the path module
-const ruleEngine = require('./ruleEngine'); // Assuming ruleEngine.js is in the same directory
+const ruleEngine = require('./ruleEngine'); 
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors()); // Allow cross-origin requests
-app.use(bodyParser.json()); // Parse JSON bodies
-
-// Serve static files from the "public" directory
+app.use(cors()); 
+app.use(bodyParser.json()); 
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint to create and evaluate rules
@@ -36,7 +34,6 @@ app.post('/evaluate', (req, res) => {
     });
 });
 
-// Start the server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
