@@ -6,7 +6,7 @@ A powerful rule engine implementation that evaluates complex business rules agai
 
 - **AST-Based Rule Processing**: Efficient rule evaluation using Abstract Syntax Trees
 - **Flexible Rule Definition**: Support for complex nested rules with logical operators (AND, OR)
-- **Database Integration**: Seamless MySQL integration for user attribute storage
+- **Database Integration**: Seamless MySQL integration for user attribute storage.
 - **RESTful API**: Easy-to-use endpoints for rule evaluation
 - **Web Interface**: User-friendly interface for rule management
 - **Extensible Design**: Easy to add new operators and conditions
